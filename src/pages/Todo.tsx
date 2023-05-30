@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+
 import styled from 'styled-components';
+
+import { todos } from '../todo.model';
+
+import TodoItem from '../components/TodoItem';
+import Counter from '../components/Counter';
+import AddTodo from '../components/AddTodo';
 
 const Title = styled.h1`
     text-align: center;
 `;
-const Input = styled.input`
-    border: 2px solid #bd93f9;
-    width: 440px;
-    border-radius: 5px;
-    padding: 5px;
-    height: 25px;
-`;
+
 const Button = styled.button`
     color: inherit;
     border-radius: 10px;
@@ -28,56 +30,68 @@ const ListHeading = styled.h2``;
 const List = styled.div`
     padding: 0 10px 0 10px;
 `;
-const ListItem = styled.div`
-    padding: 10px 0;
-`;
-const ListItemInputWrapper = styled.div`
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-`;
-const ListItemInput = styled.input`
-    width: 30px;
-    height: 30px;
-    margin-right: 20px;
-`;
-const ListItemBtnWrapper = styled.div`
-    margin-top: 20px;
-    display: flex;
-    gap: 15px;
-`;
+
 const Todo = () => {
+    const [todo, setTodo] = useState(todos);
+    const [edit, setEdit] = useState(false);
+
+    const onRemoveTodo = (id: string) => {
+        setTodo(prevState => prevState.filter(todo => todo.id !== id));
+    };
+    const onAddTodo = (e: React.FormEvent, item: string) => {
+        e.preventDefault();
+        if (item) {
+            setTodo(prevState => [...prevState, { id: uuidv4(), title: item, completed: false }]);
+        }
+    };
+
+    const onCompleted = (id: string) => {
+        const newTodos = todo.map(item => {
+            if (item.id === id) {
+                return { ...item, completed: !item.completed };
+            }
+            return item;
+        });
+        setTodo(newTodos);
+    };
+    const onSaveTodo = (e: React.FormEvent, id: string, text: string) => {
+        e.preventDefault();
+        const newTodos = todo.map(todo => {
+            if (todo.id === id) {
+                return { ...todo, title: text };
+            }
+            return todo;
+        });
+        setTodo(newTodos);
+    };
+    console.log(todo);
+    const showAllTasks = () => {};
+    const showActiveTasks = () => {};
+    const showCompletedTasks = () => {};
     return (
         <div>
-            <h1>
-                <Title>Todont</Title>
-            </h1>
-            <form>
-                <FlexBlock style={{ justifyContent: 'space-between' }}>
-                    <Input type='text' placeholder='New todo...' />
-                    <Button>Add</Button>
-                </FlexBlock>
-            </form>
+            <Title>Todont</Title>
+            <AddTodo onAddTodo={onAddTodo} />
             <FlexBlock style={{ justifyContent: 'space-between', marginTop: '20px' }}>
                 <Button style={{ width: '170px' }}>Show all tasks</Button>
                 <Button style={{ width: '170px' }}>Show Active tasks</Button>
                 <Button style={{ width: '170px' }}>Show Completed tasks</Button>
             </FlexBlock>
-            <ListHeading>3 Tasks remaining</ListHeading>
+            <ListHeading>
+                <Counter todo={todo.length} />
+            </ListHeading>
             <List>
-                <ListItem>
-                    <form>
-                        <Input type='text' style={{ width: '150px' }} />
-                    </form>
-                    <ListItemInputWrapper>
-                        <ListItemInput type='checkbox' />
-                        <label htmlFor='task'>12</label>
-                    </ListItemInputWrapper>
-                    <ListItemBtnWrapper>
-                        <Button>Edit</Button>
-                        <Button>Delete</Button>
-                    </ListItemBtnWrapper>
-                </ListItem>
+                {todo.map(item => (
+                    <TodoItem
+                        key={item.id}
+                        edit={edit}
+                        setEdit={setEdit}
+                        {...item}
+                        onSaveTodo={onSaveTodo}
+                        onRemoveTodo={onRemoveTodo}
+                        onCompleted={onCompleted}
+                    />
+                ))}
             </List>
         </div>
     );
