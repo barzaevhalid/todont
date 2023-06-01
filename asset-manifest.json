@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/todont/static/js/main.f6d014e8.js",
+    "index.html": "/todont/index.html",
+    "main.f6d014e8.js.map": "/todont/static/js/main.f6d014e8.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.f6d014e8.js"
+  ]
+}
