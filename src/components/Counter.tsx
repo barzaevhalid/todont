@@ -1,9 +1,5 @@
-import React, { useState } from 'react';
-type todoType = {
-    id: string;
-    title: string;
-    completed: boolean;
-};
+import React from 'react';
+
 type PropType = { todo: number };
 const Counter: React.FC<PropType> = ({ todo }) => {
     return <div>{todo} Tasks remaining</div>;
